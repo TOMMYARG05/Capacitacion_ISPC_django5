@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .models import Usuario
-from .forms import UsuarioForm#, CrearRegistroForm
+from .forms import UsuarioForm
 from .models import Tabla1 , Tabla2 , Tabla3
+
 
 
  
@@ -32,22 +34,25 @@ def peli(request):
 
 def mostrar(request):
     return render(request, 'mostrar.html')
- 
-def login(request):  
-    usuarios = Usuario.objects.all()  
-    return render(request,"login.html",{'usuarios':usuarios})  
- 
-def edit(request, id):  
-    usuario = Usuario.objects.get(id=id)  
-    return render(request,'edit.html', {'usuario':usuario})  
- 
+
+# def login_views(request):
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             usuario = form.cleaned_data['usuario']  # Asegúrate de usar el nombre correcto aquí
+#             contraseña = form.cleaned_data['contraseña'] # Resto del código de autenticación
+#     else:
+#         form = LoginForm()
+    
+#     return render(request, 'login.html', {'form': form})
+
 def update(request, id):  
     usuario = Usuario.objects.get(id=id)  
-    form = Usuario(request.POST, instance = usuario)  
+    form = UsuarioForm(request.POST, instance = usuario)  
     if form.is_valid():  
         form.save()  
-        return redirect("/")  
-    return render(request, 'edit.html', {'usuario': usuario})  
+        return redirect("mostrar")
+    return render(request, 'editar.html', {'usuario': usuario})  
      
 def destroy(request, id):  
     usuario = Usuario.objects.get(id=id)  
@@ -59,11 +64,20 @@ def crear_registro(request):
         form = UsuarioForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('lista_registros')
+            return redirect('mostrar')
     else:
         form = UsuarioForm()
 
     return render(request, 'crear_registro.html', {'form': form})
+
+def edit(request, id):  
+    usuario = Usuario.objects.get(id=id)  
+    return render(request,'editar.html', {'usuario':usuario})  
+
+def mostrar_usuarios(request):
+    usuarios = Usuario.objects.all() # Obtén todos los usuarios de la base de datos
+    context = {'usuarios': usuarios} # Crea un diccionario con los datos de los usuarios
+    return render(request, 'mostrar.html', context)
 
 def lista_registros(request):
     registros_tabla1 = Tabla1.objects.all()
@@ -75,41 +89,3 @@ def lista_registros(request):
         'registros_tabla2': registros_tabla2,
         'registros_tabla3': registros_tabla3
     }
-
-    return render(request, 'lista_registros.html', context)
-
-def mostrar_usuarios(request):
-    usuarios = Usuario.objects.all()  # Obtén todos los usuarios de la base de datos
-    context = {'usuarios': usuarios}  # Crea un diccionario con los datos de los usuarios
-    return render(request, 'mostrar.html', context)
-
-
-# def crear_registro(request):
-#     if request.method == 'POST':
-#         campo1 = request.POST.get('campo1')
-#         campo2 = request.POST.get('campo2')
-#         campo3 = request.POST.get('campo3')
-
-#         registro_tabla1 = Tabla1(campo1=campo1, campo2=campo2 , campo3=campo3)
-#         registro_tabla1.save()
-#         registro_tabla2 = Tabla2(campo1=campo1, campo2=campo2, campo3=campo3)
-#         registro_tabla2.save()
-#         registro_tabla3 = Tabla3(campo1=campo1, campo2=campo2, campo3=campo3)
-#         registro_tabla3.save()
-
-#         return redirect('lista_registros')
-#     else:
-#         return render(request, 'crear_registro.html')
-    
-# def lista_registros(request):
-#     registros_tabla1 = Tabla1.objects.all()
-#     registros_tabla2 = Tabla2.objects.all()
-#     registros_tabla3 = Tabla3.objects.all()
-
-#     context = {
-#         'registros_tabla1': registros_tabla1,
-#         'registros_tabla2': registros_tabla2,
-#         'registros_tabla3': registros_tabla3
-#     }
-
-#     return render(request, 'lista_registros.html', context)
