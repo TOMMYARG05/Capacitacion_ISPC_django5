@@ -70,13 +70,14 @@
     <br><br><br>
     <div class="tablaactualizar">
       <form class="post-form" method="POST" action="/update/{{ usuario.id }}/">
+
         {% csrf_token %}
         <div class="conteiner">
           <h3>Actualizar Detalles</h3>
         </div>
         <div class="mb-3">
           <label>Nombre</label>
-          <input type="text" class="form-control" name="Nombre" id="id.nombre_usuario" required maxlength="30" value="{{usuario.nombre_usuario}}"/>
+          <input type="text" class="form-control" name="nombre" id="id.nombre_usuario" required maxlength="30" value="{{usuario.nombre_usuario}}"/>
         </div>
         <div class="mb-3">
           <label>Email</label>

@@ -1,8 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
 from .models import Usuario
 from .forms import UsuarioForm
 from .models import Tabla1 , Tabla2 , Tabla3
@@ -35,29 +33,35 @@ def peli(request):
 def mostrar(request):
     return render(request, 'mostrar.html')
 
-# def login_views(request):
+# def update(request, pk):    
+#     usuario = get_object_or_404(Usuario, pk=pk)
 #     if request.method == 'POST':
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             usuario = form.cleaned_data['usuario']  # Asegúrate de usar el nombre correcto aquí
-#             contraseña = form.cleaned_data['contraseña'] # Resto del código de autenticación
+#         form = UsuarioForm(request.POST, instance=usuario)
+#         if form.is_valid():            
+#             form.save()
+#             return redirect('mostrar')
 #     else:
-#         form = LoginForm()
+#         form = UsuarioForm(instance=usuario)
     
-#     return render(request, 'login.html', {'form': form})
+#     return render(request, 'editar.html', {'form': form, 'usuario': usuario})
 
-def update(request, id):  
-    usuario = Usuario.objects.get(id=id)  
-    form = UsuarioForm(request.POST, instance = usuario)  
-    if form.is_valid():  
-        form.save()  
-        return redirect("mostrar")
-    return render(request, 'editar.html', {'usuario': usuario})  
-     
-def destroy(request, id):  
+
+def update(request, id):
+    usuario = Usuario.objects.get(id=id)
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('mostrar')
+    else:
+        form = UsuarioForm(instance=usuario)
+
+    return render(request, 'editar.html', {'form': form, 'usuario': usuario})
+
+def destroy(request, id ):  
     usuario = Usuario.objects.get(id=id)  
     usuario.delete()  
-    return redirect("/") 
+    return redirect("mostrar") 
 
 def crear_registro(request):
     if request.method == 'POST':
@@ -67,7 +71,6 @@ def crear_registro(request):
             return redirect('mostrar')
     else:
         form = UsuarioForm()
-
     return render(request, 'crear_registro.html', {'form': form})
 
 def edit(request, id):  

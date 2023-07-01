@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from . import views
+from app1 import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -11,8 +11,8 @@ urlpatterns = [
     path('psvl/', views.psvl, name="Papa se volvio loco"),
     path('lbmldm/', views.lbmldm, name="Los Bañeros Mas Locos Del Mundo"),
     path('st/', views.st, name="Starship Troopers"),
-    path('edit/<int:id>/', views.edit, name="editar"),
-    path('editar/<int:id>/', views.update, name="edit"),
+    path('editar/<int:id>/', views.edit, name="editar"),
+    #path('editar/<int:id>/', views.update, name="editar"),
     path('destroy/<int:id>/', views.destroy, name="eliminar"),
     path('update/<int:id>/', views.update, name="actualizar"),
     path('mostrar/', views.mostrar_usuarios, name='mostrar'),
